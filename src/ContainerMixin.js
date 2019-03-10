@@ -31,6 +31,7 @@ export const ContainerMixin = {
     pressThreshold:             { type: Number,  default: 5 },
     useDragHandle:              { type: Boolean, default: false },
     useWindowAsScrollContainer: { type: Boolean, default: false },
+    scrollContainerElement:     { type: String, default: undefined },
     hideSortableGhost:          { type: Boolean, default: true },
     lockToContainerEdges:       { type: Boolean, default: false },
     lockOffset:                 { type: [String, Number, Array], default: '50%' },
@@ -40,15 +41,15 @@ export const ContainerMixin = {
     lockAxis: String,
     helperClass: String,
     contentWindow: Object,
-    shouldCancelStart: { 
-      type: Function, 
+    shouldCancelStart: {
+      type: Function,
       default: (e) => {
         // Cancel sorting if the event target is an `input`, `textarea`, `select` or `option`
         const disabledElements = ['input', 'textarea', 'select', 'option', 'button'];
         return disabledElements.indexOf(e.target.tagName.toLowerCase()) !== -1;
       },
     },
-    getHelperDimensions: { 
+    getHelperDimensions: {
       type: Function,
       default: ({node}) => ({
         width: node.offsetWidth,
@@ -67,9 +68,13 @@ export const ContainerMixin = {
     this.container = this.$el;
     this.document = this.container.ownerDocument || document;
     this._window = this.contentWindow || window;
-    this.scrollContainer = this.useWindowAsScrollContainer
-      ? this.document.body
-      : this.container;
+    if (this.scrollContainerElement) {
+      this.scrollContainer = this.document.querySelector(this.scrollContainerElement);
+    } else {
+      this.scrollContainer = this.useWindowAsScrollContainer
+        ? this.document.body
+        : this.container;
+    }
 
     for (const key in this.events) {
       if (this.events.hasOwnProperty(key)) {
@@ -201,7 +206,7 @@ export const ContainerMixin = {
         const {index} = node.sortableInfo;
         const margin = getElementMargin(node);
 
-        const containerBoundingRect = this.container.getBoundingClientRect();
+        const containerBoundingRect = this.scrollContainer.getBoundingClientRect();
         const dimensions = getHelperDimensions({index, node, collection});
 
         this.node = node;
