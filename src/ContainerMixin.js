@@ -31,7 +31,7 @@ export const ContainerMixin = {
     pressThreshold:             { type: Number,  default: 5 },
     useDragHandle:              { type: Boolean, default: false },
     useWindowAsScrollContainer: { type: Boolean, default: false },
-    scrollContainerElement:     { type: String, default: undefined },
+    scrollContainerElement:     { type: [String, HTMLElement], default: undefined },
     hideSortableGhost:          { type: Boolean, default: true },
     lockToContainerEdges:       { type: Boolean, default: false },
     lockOffset:                 { type: [String, Number, Array], default: '50%' },
@@ -69,7 +69,9 @@ export const ContainerMixin = {
     this.document = this.container.ownerDocument || document;
     this._window = this.contentWindow || window;
     if (this.scrollContainerElement) {
-      this.scrollContainer = this.document.querySelector(this.scrollContainerElement);
+      this.scrollContainer = typeof this.scrollContainerElement === 'string'
+        ? this.document.querySelector(this.scrollContainerElement)
+        : this.scrollContainerElement;
     } else {
       this.scrollContainer = this.useWindowAsScrollContainer
         ? this.document.body
