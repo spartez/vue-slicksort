@@ -252,7 +252,8 @@ export const ContainerMixin = {
           }
         });
 
-        this.helper = this.document.querySelector(appendTo).appendChild(clonedNode);
+        const helper = this.document.querySelector(appendTo).appendChild(clonedNode);
+        this.helper = helper;
 
         this.helper.style.position = 'fixed';
         this.helper.style.top = `${this.boundingClientRect.top - margin.top}px`;
@@ -317,7 +318,7 @@ export const ContainerMixin = {
         this.sorting = true;
         this.sortingIndex = index;
 
-        this.$emit('sort-start', {event: e, node, index, collection});
+        this.$emit('sort-start', {event: e, node, helper, index, collection});
       }
     },
 
